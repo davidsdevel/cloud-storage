@@ -1,0 +1,22 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev -p 3010"
+  },
+  "dependencies": {
+    "firebase": "^9.22.1",
+    "firebase-admin": "^11.8.0",
+    "next": "^13.4.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "eslint-config-next": "^13.4.4",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2"
+  }
+}

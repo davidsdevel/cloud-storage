@@ -1,0 +1,16 @@
+{
+  "name": "cloud-storage",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.41.0",
+    "prettier": "^2.8.8"
+  }
+}

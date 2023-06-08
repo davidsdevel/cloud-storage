@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example</title>
+</head>
+<body>
+  <div>
+    <input type="text" name="path" id='path'/>
+    <input type="file" name="file" id='file'/>
+    <button onclick="upload()">Upload</button>
+  </div>
+
+  <div>
+    <input type="text" name="pathDel" id='pathDel'>
+    <button onclick="deleteFile()">Delete</button>
+  </div>
+  <script>
+    async function upload() {
+      const pathElement = document.getElementById('path')
+      const fileElement = document.getElementById('file')
+
+      const {value: path} = pathElement; 
+      const {files: [file]} = fileElement;
+
+      const formData = new FormData();
+
+      formData.append('file', file);
+      formData.append('path', path);
+
+      const res = await fetch('/file', {
+        method: 'POST',
+        headers: {
+          authorization: ''
+        },
+        body: formData
+      });
+
+      console.log(res);
+    }
+
+    async function deleteFile() {
+
+
+      const pathElement = document.getElementById('pathDel');
+
+      const {value: path} = pathElement; 
+
+      const res = await fetch(`/file/${path}`, {
+        method: 'DELETE',
+        headers: {
+          authorization: ''
+        }
+      });
+
+      console.log(res);
+    }
+  </script>
+</body>
+</html>
