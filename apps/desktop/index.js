@@ -1,10 +1,11 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const {updateAuthFile, getConfigData} = require('./lib/auth');
 const {join} = require('path');
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 400,
+    height: 300,
     webPreferences: {
       preload: join(__dirname, 'preload.js')
     }
@@ -14,7 +15,25 @@ const createWindow = () => {
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  ipcMain.handle('isLogged', async () => {
+    const {token} = await getConfigData();
+
+    return !!token; 
+  });
+
+  ipcMain.handle('login', async token => {
+    await updateAuthFile({token});
+
+    return true; 
+  });
+
+  ipcMain.handle('logout', async () => {
+    const {token} = await getConfigData();
+
+    return !!token; 
+  });
+
+  createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().lenght === 0)

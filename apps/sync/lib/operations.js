@@ -12,7 +12,12 @@ function createBucket(bucketName) {
   const s3 = createClient();
 
   return new Promise((resolve, reject) => {
-    s3.createBucket({Bucket: bucketName}, (err, data) => {
+    s3.createBucket({
+      Bucket: bucketName,
+      CreateBucketConfiguration: {
+        LocationConstraint: 'us-east-005'
+      }
+    }, (err, data) => {
       if (err)
         return reject(err);
 

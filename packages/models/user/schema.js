@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const schema = new mongoose.Schema({
+  bucket: {
+    required: true,
+    type: String
+  },
   name: {
     required: true,
     type: String
@@ -18,30 +23,40 @@ const schema = new mongoose.Schema({
     required: true,
     type: String,
     unique: true
-  },
-  storageSize: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  connectedDevices: {
-    type: Number,
-    required: true,
-    default: 0
   }
 });
 
-schema.statics.createUser = () => {};
+schema.statics.createUser = async function(data) {
+  try {
+    const password = await bcrypt.hash(data.password, 10);
 
-schema.statics.login = () => {};
+    const res = await this.create({
+      ...data,
+      password
+    });
+    console.log(res);
 
-schema.statics.incrementDevice = () => {};
+    return res._id;
+  } catch(err) {
+    console.log(err);
+    return null;
+  }
+};
 
-schema.statics.decrementDevice = () => {};
+schema.statics.login = async function(email, password) {
+  const account = await this.findOne({email}, 'password bucket');
 
-schema.statics.incrementStorage = () => {};
+  if (!account)
+    return null;
 
-schema.statics.decrementStorage = () => {};
+  const hasValidPassword = await bcrypt.verify(password, account.password);
 
+  if (!hasValidPassword)
+    return null;
+
+  return jwt.sign({
+    bucket: account.bucket
+  }, process.env.JWT_SECRET);
+};
 
 module.exports = schema;

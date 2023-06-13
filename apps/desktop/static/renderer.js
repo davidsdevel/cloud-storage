@@ -1,3 +1,21 @@
-const information = document.getElementById('info');
+function login() {
+  
+}
 
-information.innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`;
+
+async function init() {
+  const login = document.getElementById('login');
+  const dashboard = document.getElementById('dashboard');
+
+  const isLogged = await utils.isLogged();
+
+  if (isLogged) {
+    login.style.display = 'none';
+    dashboard.style.display = 'flex';
+  } else {
+    login.style.display = 'flex';
+    dashboard.style.display = 'none';
+  }
+}
+
+init();

@@ -5,6 +5,6 @@
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.0",
-    "mongoose": "^7.2.1"
+    "mongoose": "^7.2.4"
   }
 }

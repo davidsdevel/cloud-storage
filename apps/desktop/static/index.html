@@ -3,11 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hello from Electron renderer!</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        height: 100vh;
+      }
+      #login, #dashboard {
+        display: none;
+      }
+
+      /*
+    #000814
+    #001d3d
+    #003566
+    #ffc300
+    #ffd60a
+      */
+      #login {
+        position: absolute;
+        background: #003566;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #form-container {
+        background: #f7f7f7;
+        width: 50%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 6px;
+        border-radius: 12px;
+      }
+      input[type='text'],
+      input[type='password'] {
+        border: none;
+        border-radius: 100px;
+        padding: 10px 16px;
+        margin: 6px 0;
+        width: 100%;
+      }
+      button {
+        border-radius: 100px;
+        padding: 12px 16px;
+        border: none;
+        width: 100%;
+
+        cursor: pointer;
+        transition: ease .3s;
+      }
+      button:hover {
+        box-shadow: 1px 1px 1px gray;
+      }
+      button.solid {
+        background: #ffc300;
+        color: white;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello from Electron renderer!</h1>
-    <p>👋</p>
-    <p id="info"></p>
+    <div id="login">
+      <div id='form-container'>
+        <input type="text" name="" placeholder="Email" />
+        <input type="password" name="" placeholder="Password" />
+        <button class="solid">Login</button>
+      </div>
+    </div>
+
+    <div id='dashboard'>
+      <span>Dashboard</span>
+    </div>
   </body>
   <script src="./renderer.js"></script>
 </html>
