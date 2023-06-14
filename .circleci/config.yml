@@ -4,28 +4,98 @@ orbs:
   node: circleci/node@4.1
 
 jobs:
-  build:
-    working_directory: ~/cloud-storage/apps/desktop
-    docker:
-      - image: cimg/node:18.15.0
+  mac-build:
+    parameters:
+      arch:
+        type: enum
+        enum: [ 'x64', 'arm64' ]
+    macos:
+      xcode: '13.4.0'
+    resource_class: macos.x86.medium.gen2
     steps:
-      - checkout:
-          path: ~/cloud-storage
-      - node/install-packages:
-          pkg-manager: yarn
-          with-cache: false
-      - run:
-          name: Install dpkg and fakeroot
-          command: |
-            sudo apt-get update -y
-            sudo apt-get install -y dpkg fakeroot
-      - run:
-          name: Generate Builds
-          command: yarn make
+      - install
+      - run: yarn run make --arch=<< parameters.arch >> --dry-run
       - store_artifacts:
-          path: ./out/make
+          path: out
+      - persist_to_workspace:
+          root: .
+          paths:
+            - out
+  win-build:
+    parameters:
+      arch:
+        type: enum
+        enum: [ 'x64', 'arm64', 'ia32' ]
+    executor:
+      name: win/default
+      shell: bash.exe
+    steps:
+      - install
+      - run: yarn run make --arch=<< parameters.arch >> --dry-run
+      - store_artifacts:
+          path: out
+      - persist_to_workspace:
+          root: .
+          paths:
+            - out
+  linux-build:
+    parameters:
+      arch:
+        type: enum
+        enum: [ 'x64', 'arm64','armv7l' ]
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: sudo apt-get update && sudo apt install rpm
+      - install
+      - run: npx yarn run make --arch=<< parameters.arch >>
+      - store_artifacts:
+          path: out
+      - persist_to_workspace:
+          root: .
+          paths:
+            - out
+
+  publish-to-github:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - install
+      - attach_workspace:
+          at: .
+      - load-gh-token
+      - run: yarn run publish --from-dry-run
 
 workflows:
   build:
     jobs:
-      - build
+      - mac-build:
+          matrix:
+            parameters:
+              arch: [ x64, arm64 ]
+          
+      - win-build:
+          matrix:
+            parameters:
+              arch: [ x64, ia32 ]
+          
+      - linux-build:
+          matrix:
+            parameters:
+              arch: [ x64, arm64, armv7l ]          
+
+      # - publish-to-github:
+      #     context: fiddle-release
+      #     requires:
+      #       - lint
+      #       - mac-test-x64
+      #       - mac-test-arm64
+      #       - win-test-x64
+      #       - linux-test-x64
+      #       - mac-build-x64
+      #       - mac-build-arm64
+      #       - win-build-ia32
+      #       - win-build-x64
+      #       - linux-build-x64
+      #       - linux-build-arm64
+      #       - linux-build-armv7l
