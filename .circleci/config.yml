@@ -6,7 +6,6 @@ jobs:
     docker:
       - image: cimg/node:18.15.0
     steps:
-      steps:
       - checkout:
           path: ~/cloud-storage
       - node/install-packages:
