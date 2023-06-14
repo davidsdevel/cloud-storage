@@ -14,6 +14,8 @@ commands:
           with-cache: true
 jobs:
   mac-build:
+    docker:
+      - image: cimg/node:18.15.0
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
@@ -32,6 +34,8 @@ jobs:
           paths:
             - out
   win-build:
+    docker:
+      - image: cimg/node:18.15.0
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
@@ -50,6 +54,8 @@ jobs:
           paths:
             - out
   linux-build:
+    docker:
+      - image: cimg/node:18.15.0
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
