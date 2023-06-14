@@ -6,6 +6,7 @@ const cors = require('cors');
 
 const fileRouter = require('../routes/files');
 const authRouter = require('../routes/auth');
+const bucketRouter = require('../routes/bucket');
 
 const app = express();
 
@@ -24,7 +25,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRouter);
+
 app.use('/file', fileRouter);
+app.use('/bucket', bucketRouter);
 app.all('*', (req, res) => res.sendStatus(404))
 
 module.exports = http;

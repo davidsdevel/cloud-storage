@@ -102,7 +102,7 @@ function uploadFile(bucketName, key, filePath, options) {
   });
 }
 
-function deleteFile(bucketName, key, filePath) {
+function deleteFile(bucketName, key) {
   const s3 = createClient();
 
   return new Promise((resolve, reject) => {
@@ -111,12 +111,18 @@ function deleteFile(bucketName, key, filePath) {
       Key: key
     };
 
-    s3.deleteObject(params, (err, data) => {
-      if (err)
-        return reject(err);
+    s3.headObject(params, (headErr, headData) => {
+      if (headErr)
+        return reject(headErr);
 
-      return resolve(data);
+      s3.deleteObject(params, (err, data) => {
+        if (err)
+          return reject(err);
+
+        return resolve(headData);
+      });
     });
+
   });
 }
 

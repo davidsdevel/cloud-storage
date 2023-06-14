@@ -6,8 +6,8 @@ const {join} = require('path');
 
 let token = null;
 
-const {getConfigData, serverHost} = require('./auth');
-const {syncedDir} = require('./constants');
+const {getConfigData} = require('./auth');
+const {syncedDir, serverHost} = require('./constants');
 const {initSocket} = require('./socket');
 
 
@@ -32,6 +32,26 @@ async function uploadFile(filePath) {
   const body = new FormData();
 
   body.append('path', relativeFilePath.replace(/\\/g, '/'));
+  body.append('type', 'upload');
+  body.append('file', createReadStream(filePath));
+
+  const formHeaders = body.getHeaders();
+
+  await axios.post(`${serverHost}/file`, body, {
+    headers: {
+      ...formHeaders,
+      authorization: `Bearer ${token}`
+    },
+  });
+}
+
+async function updateFile(filePath) {
+  const relativeFilePath = filterPath(filePath);
+  
+  const body = new FormData();
+
+  body.append('path', relativeFilePath.replace(/\\/g, '/'));
+  body.append('type', 'update');
   body.append('file', createReadStream(filePath));
 
   const formHeaders = body.getHeaders();
@@ -123,11 +143,19 @@ async function startSync() {
   
   await syncFiles();
   
-  initSocket(token, handleNewFile, handleDeleteFile);
+  const socket = initSocket(token, handleNewFile, handleDeleteFile);
 
   watcher
     .on('add', uploadFile)
-    .on('change', uploadFile)
+    .on('change', updateFile)
     .on('unlink', deleteFile);
+
+  return {
+    socket,
+    watcher
+  }
 }
 
+module.exports = exports = {
+  startSync
+}

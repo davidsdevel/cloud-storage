@@ -30,13 +30,12 @@ schema.statics.createUser = async function(data) {
   try {
     const password = await bcrypt.hash(data.password, 10);
 
-    const res = await this.create({
+    const {_id} = await this.create({
       ...data,
       password
     });
-    console.log(res);
 
-    return res._id;
+    return _id;
   } catch(err) {
     console.log(err);
     return null;
@@ -49,7 +48,7 @@ schema.statics.login = async function(email, password) {
   if (!account)
     return null;
 
-  const hasValidPassword = await bcrypt.verify(password, account.password);
+  const hasValidPassword = await bcrypt.compare(password, account.password);
 
   if (!hasValidPassword)
     return null;

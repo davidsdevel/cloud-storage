@@ -10,22 +10,17 @@
         box-sizing: border-box;
       }
       body {
-        height: 100vh;
+        min-height: 100vh;
+        font-family: Helvetica;
+        background: #f7f7f7;
       }
       #login, #dashboard {
         display: none;
       }
 
-      /*
-    #000814
-    #001d3d
-    #003566
-    #ffc300
-    #ffd60a
-      */
       #login {
         position: absolute;
-        background: #003566;
+        background: #6c63ff;
         height: 100%;
         width: 100%;
         display: flex;
@@ -66,19 +61,81 @@
         background: #ffc300;
         color: white;
       }
+
+      /*Dashboard*/
+      #dashboard {
+        display: flex;
+        flex-direction: column; 
+        align-items: center;
+      }
+
+      #storage-panel {
+        width: 100%;
+        background: #6c63ff;
+        display: flex;
+        flex-direction: column;
+        padding: 24px 0;
+        align-items: center;
+        color: white;
+        border-radius: 0 0 24px 24px;
+        margin-bottom: 12px;
+      }
+
+      #storage {
+        font-size: 2rem;
+        font-weight: bolder;
+        margin: 32px 0;
+      }
+
+      #devices-connected {
+        text-align: center;
+        width: 100%;
+        display: inline-block;
+      }
+      #no-devices {
+        padding: 36px 20%;
+        display: flex;
+        flex-direction: column;
+      }
+      #no-devices img {
+        width: 100%;
+      }
+      #no-devices span {
+        font-size: .8rem;
+        text-align: center;
+        margin-top: 12px;
+      }
     </style>
   </head>
   <body>
     <div id="login">
       <div id='form-container'>
-        <input type="text" name="" placeholder="Email" />
-        <input type="password" name="" placeholder="Password" />
-        <button class="solid">Login</button>
+        <input type="text" name="email" id="email" placeholder="Email" />
+        <input type="password" name="password" id="password" placeholder="Password" />
+        <button class="solid" onclick='login()'>Login</button>
       </div>
     </div>
 
     <div id='dashboard'>
-      <span>Dashboard</span>
+      <div id="storage-panel">
+        <span id="storage">0B</span>
+        <span>Usado</span>
+      </div>
+      <div>
+        <span id='devices-connected'>Dispositivos Conectados</span>
+        <div id='no-devices'>
+          <img src="./sync.svg">
+          <span>No hay dispositivos adicionales vinculados</span>
+        </div>
+
+        <div id='load-devices'>
+          
+        </div>
+        
+        <ul id="devices">
+          
+        </ul>
+      </div>
     </div>
   </body>
   <script src="./renderer.js"></script>

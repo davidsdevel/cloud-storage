@@ -1,8 +1,9 @@
 const {getFile, uploadFile, deleteFile, existsFile, listFiles}  = require('../lib/operations');
 const authMiddleware  = require('../middlewares/auth');
-const os = require('os');
+const Bucket = require('models/bucket');
 const {Router} = require('express');
 const multer  = require('multer');
+const os = require('os');
 
 const tempDir = os.tmpdir();
 
@@ -90,7 +91,7 @@ router.get('/exists/*', async (req, res, next) => {
  */
 router.post('/', upload.single('file'), async (req, res) => {
   const {bucket} = req.user;
-  const {path} = req.body;
+  const {path, type} = req.body;
   const {file} = req;
 
   const exists = await existsFile(bucket, path);
@@ -102,7 +103,12 @@ router.post('/', upload.single('file'), async (req, res) => {
     ContentType: file.mimetype
   });
 
-  req.io.to(bucket).emit('file:new', {path, bucket});
+  if(type === 'upload') {
+    const totalSize = await Bucket.incrementStorage(bucket, file.size);
+    
+    req.io.to(bucket).emit('file:new', {path, bucket});
+    req.io.to(bucket).emit('storage:update', totalSize);
+  }
 
   //TODO Modify response
   res.json({});
@@ -117,7 +123,9 @@ router.delete('*', async (req, res) => {
   const path = req.path.slice(1);
 
   const response = await deleteFile(bucket, path);
-  
+  const totalSize = await Bucket.decrementStorage(bucket, response.ContentLength);
+
+  req.io.to(bucket).emit('storage:update', totalSize);  
   req.io.to(bucket).emit('file:delete', {path});
 
   //TODO Modify response

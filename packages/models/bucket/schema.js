@@ -22,21 +22,28 @@ const schema = new mongoose.Schema({
   }
 });
 
-
 schema.statics.incrementDevices = function(name) {
   return this.updateOne({name}, {$inc: {connectedDevices: 1}});
 };
 
-schema.statics.incrementStorage = function(name, bytes) {
-  return this.updateOne({name}, {$inc: {storageSize: bytes}});
+schema.statics.incrementStorage = async function(name, bytes) {
+  const {storageSize} = await this.findOne({name}, 'storageSize', {lean: true});
+
+  await this.updateOne({name}, {$inc: {storageSize: bytes}});
+
+  return storageSize + bytes;
 };
 
 schema.statics.decrementDevices = function(name) {
   return this.updateOne({name}, {$inc: {connectedDevices: -1}});
 };
 
-schema.statics.decrementStorage = function(name, bytes) {
-  return this.updateOne({name}, {$inc: {storageSize: -bytes}});
+schema.statics.decrementStorage = async function(name, bytes) {
+  const {storageSize} = await this.findOne({name}, 'storageSize', {lean: true});
+
+  await this.updateOne({name}, {$inc: {storageSize: -bytes}});
+
+  return storageSize - bytes;
 };
 
 module.exports = schema;

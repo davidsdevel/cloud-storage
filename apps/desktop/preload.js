@@ -2,5 +2,6 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('utils', {
   isLogged: () => ipcRenderer.invoke('isLogged'),
-  login: () => ipcRenderer.invoke('login')
+  login: (email, password) => ipcRenderer.invoke('login', {email, password}),
+  onUpdateStorage: cb => ipcRenderer.on('update-storage', cb)
 });

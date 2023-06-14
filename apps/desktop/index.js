@@ -1,38 +1,48 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const {updateAuthFile, getConfigData} = require('./lib/auth');
+const {updateAuthFile, getConfigData, login} = require('./lib/auth');
+const {startSync} = require('./lib/sync');
+const {app, BrowserWindow, ipcMain} = require('electron');
 const {join} = require('path');
 
 const createWindow = () => {
-  const win = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 400,
-    height: 300,
+    height: 600,
+    resizable: false,
     webPreferences: {
       preload: join(__dirname, 'preload.js')
     }
   });
 
-  win.loadFile(join(__dirname, 'static/index.html'));
-}
-
-app.whenReady().then(() => {
   ipcMain.handle('isLogged', async () => {
     const {token} = await getConfigData();
 
-    return !!token; 
+    return token; 
   });
 
-  ipcMain.handle('login', async token => {
-    await updateAuthFile({token});
+  ipcMain.handle('login', async (_, {email, password}) => {
+    try {
+      const token = await login(email, password);
 
-    return true; 
+      if (!token)
+        return null; 
+
+      await updateAuthFile({token});
+
+      return token; 
+    } catch(err) {
+      return null;
+    }
   });
 
-  ipcMain.handle('logout', async () => {
-    const {token} = await getConfigData();
+  startSync()
+    .then(({socket}) => {
+      socket.on('storage:update', size => mainWindow.webContents.send('update-storage', size))
+    });
 
-    return !!token; 
-  });
+  mainWindow.loadFile(join(__dirname, 'static/index.html'));
+}
 
+app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {

@@ -1,5 +1,6 @@
-const {exists, writeFile, mkdir} = require('fs');
+const {exists, writeFile, mkdir, readFile} = require('fs');
 const {authFilePath, configDir, serverHost} = require('./constants');
+const {getPlatform} = require('./utils');
 const axios = require('axios');
 
 const existsAuthFile =  () =>  (new Promise(resolve => exists(authFilePath, resolve)));
@@ -8,7 +9,7 @@ const writeAuthFile = async content => {
   const existsFile = await existsAuthFile();
 
   if (!existsFile)
-    await new Promise(resolve => mkdir(configDir, (err, data) => err ? reject(err) : resolve(data)));
+    await new Promise(resolve => mkdir(configDir, resolve));
 
   return new Promise((resolve, reject) => writeFile(authFilePath, content, (err, res) => err ? reject(err) : resolve(res)));
 }
@@ -19,7 +20,7 @@ const getConfigData = async () => {
   if (!existsFile)
     await writeAuthFile('{}');
 
-  return require(authFilePath);
+  return new Promise((resolve, reject) => readFile(authFilePath, (err, res) => err ? reject(err) : resolve(JSON.parse(res))));
 }
 
 const updateAuthFile = async data => {
@@ -40,10 +41,26 @@ const login = async (email, password) => {
   });
 
   const {token} = data;
+
+  const platorm = getPlatform();
+
+  await axios.post(`${serverHost}/device`, {
+    headers: {
+      authentication: `Bearer ${token}`
+    },
+    data: {
+      deviceType: 'desktop',
+      platform,
+      model: 'Desktop'
+    }
+  });
+
+  return token;
 }
 
 module.exports = exports = {
   getConfigData,
   existsAuthFile,
-  updateAuthFile
+  updateAuthFile,
+  login
 }

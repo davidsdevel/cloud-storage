@@ -6,8 +6,6 @@ const authMiddleware = (socket, next) => {
 
   const {bucket} = jwt.verify(token, process.env.JWT_SECRET);
 
-  console.log(bucket);
-
   socket.bucket = bucket;
 
   socket.join(bucket);

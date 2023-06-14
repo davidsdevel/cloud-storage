@@ -11,7 +11,7 @@ const router = Router();
 router.post('/login', async (req, res) => {
   const {email, password} = req.body;
 
-  const token = User.login(email, password);
+  const token = await User.login(email, password);
 
   if (!token)
     return res.status(400).json({

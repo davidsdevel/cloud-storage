@@ -7,7 +7,7 @@ const axios = require('axios');
 const {join} = require('path');
 const os = require('os');
 
-async function initSocket(token, onNewFile, onDeleteFile) {
+function initSocket(token, onNewFile, onDeleteFile) {
   const socket = io(serverHost, {
     auth: {
       token
@@ -17,6 +17,8 @@ async function initSocket(token, onNewFile, onDeleteFile) {
   socket
     .on('file:new', onNewFile)
     .on('file:delete', onDeleteFile);
+
+  return socket;
 }
 
 module.exports = exports = {
