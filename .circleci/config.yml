@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@4.1
-  
+
 jobs:
   build:
     working_directory: ~/cloud-storage/apps/desktop
@@ -20,11 +20,8 @@ jobs:
             sudo apt-get update -y
             sudo apt-get install -y dpkg fakeroot
       - run:
-          name: Build
-          command: yarn build
-      - run:
           name: Generate Builds
-          command: npm run make
+          command: yarn make
       - store_artifacts:
           path: ./out/make
 
