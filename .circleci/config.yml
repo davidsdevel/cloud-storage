@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@4.1
+  
 jobs:
   build:
     working_directory: ~/cloud-storage/apps/desktop
