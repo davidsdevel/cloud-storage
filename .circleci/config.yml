@@ -1,7 +1,26 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4.1
+  node: circleci/node@5.1.0
+  win: circleci/windows@5.0.0
+
+commands:
+  install:
+    steps:
+      - run: git config --global core.autocrlf input
+      - node/install:
+          node-version: '18.4.0'
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
+            - v1-dependencies-{{ arch }}
+      - run: npm install --global yarn
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
 
 jobs:
   mac-build:
