@@ -8,22 +8,14 @@ commands:
   install:
     steps:
       - run: git config --global core.autocrlf input
-      - node/install:
-          node-version: '18.4.0'
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
-            - v1-dependencies-{{ arch }}
-      - run: npm install --global yarn
-      - run: yarn install --frozen-lockfile
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}
-
+      - checkout:
+          path: ~/cloud-storage
+      - node/install-packages:
+          pkg-manager: yarn
+          with-cache: true
 jobs:
   mac-build:
+    working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
         type: enum
@@ -41,6 +33,7 @@ jobs:
           paths:
             - out
   win-build:
+    working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
         type: enum
@@ -58,6 +51,7 @@ jobs:
           paths:
             - out
   linux-build:
+    working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
         type: enum
