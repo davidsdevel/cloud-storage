@@ -8,8 +8,7 @@ commands:
   install:
     steps:
       - run: git config --global core.autocrlf input
-      - checkout:
-          path: ~/cloud-storage
+      - checkout
       - node/install-packages:
           pkg-manager: yarn
           with-cache: true
