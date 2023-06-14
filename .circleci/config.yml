@@ -22,7 +22,6 @@ jobs:
     steps:
       - install
   mac-build:
-    working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
         type: enum
@@ -32,7 +31,7 @@ jobs:
     resource_class: macos.x86.medium.gen2
     steps:
       - install
-      - run: yarn make --arch=<< parameters.arch >> --dry-run
+      - run: yarn workspace desktop run make --arch=<< parameters.arch >> --dry-run
       - store_artifacts:
           path: out
       - persist_to_workspace:
@@ -40,7 +39,6 @@ jobs:
           paths:
             - out
   win-build:
-    working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
         type: enum
@@ -50,7 +48,7 @@ jobs:
       shell: bash.exe
     steps:
       - install
-      - run: yarn make --arch=<< parameters.arch >> --dry-run
+      - run: yarn workspace desktop run make --arch=<< parameters.arch >> --dry-run
       - store_artifacts:
           path: out
       - persist_to_workspace:
@@ -60,7 +58,6 @@ jobs:
   linux-build:
     docker:
       - image: cimg/base:stable
-    working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
         type: enum
@@ -68,7 +65,7 @@ jobs:
     steps:
       - run: sudo apt-get update && sudo apt install rpm
       - install
-      - run: yarn make --arch=<< parameters.arch >> --dry-run
+      - run: yarn workspace desktop run make --arch=<< parameters.arch >> --dry-run
       - store_artifacts:
           path: out
       - persist_to_workspace:
