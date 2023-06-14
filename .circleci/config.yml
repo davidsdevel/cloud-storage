@@ -14,10 +14,14 @@ commands:
       - checkout
       - run: npm install --global yarn
       - run: yarn install --frozen-lockfile
+
 jobs:
-  mac-build:
+  lint:
     docker:
       - image: cimg/base:stable
+    steps:
+      - install
+  mac-build:
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
@@ -36,8 +40,6 @@ jobs:
           paths:
             - out
   win-build:
-    docker:
-      - image: cimg/base:stable
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
