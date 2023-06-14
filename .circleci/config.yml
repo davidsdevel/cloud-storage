@@ -8,14 +8,16 @@ commands:
   install:
     steps:
       - run: git config --global core.autocrlf input
+      - node/install:
+          node-version: '18.4.0'
+      - run: nvm use 18.4.0
       - checkout
-      - node/install-packages:
-          pkg-manager: yarn
-          with-cache: true
+      - run: npm install --global yarn
+      - run: yarn install --frozen-lockfile
 jobs:
   mac-build:
     docker:
-      - image: cimg/node:18.15.0
+      - image: cimg/base:stable
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
@@ -35,7 +37,7 @@ jobs:
             - out
   win-build:
     docker:
-      - image: cimg/node:18.15.0
+      - image: cimg/base:stable
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
@@ -55,7 +57,7 @@ jobs:
             - out
   linux-build:
     docker:
-      - image: cimg/node:18.15.0
+      - image: cimg/base:stable
     working_directory: ~/cloud-storage/apps/desktop
     parameters:
       arch:
