@@ -61,8 +61,6 @@ jobs:
       arch:
         type: enum
         enum: [ 'x64', 'arm64','armv7l' ]
-    docker:
-      - image: cimg/base:stable
     steps:
       - run: sudo apt-get update && sudo apt install rpm
       - install
