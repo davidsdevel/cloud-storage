@@ -1,0 +1,28 @@
+version: 2.1
+
+jobs:
+  build:
+    working_directory: ~/cloud-storage/apps/desktop
+    docker:
+      - image: cimg/node:18.15.0
+    steps:
+      steps:
+      - checkout:
+          path: ~/cloud-storage
+      - node/install-packages:
+          pkg-manager: yarn
+          with-cache: false
+      - run:
+          name: Install dpkg and fakeroot
+          command: |
+            sudo apt-get update -y
+            sudo apt-get install -y dpkg fakeroot
+      - run:
+          name: Build
+          command: yarn build
+      - run:
+          name: Generate Builds
+          command: npm run make
+      - store_artifacts:
+          path: ./out/make
+
