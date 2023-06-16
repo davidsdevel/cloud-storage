@@ -5,13 +5,13 @@ This is a cloud storage and sync service, allow users storage and sync their fil
 ## Built With
 
 - [NextJS](https://nextjs.org) - React SSR Framework
-- [Express](https://nextjs.org) - Server Framework
-- [Socket.IO](https://vercel.com) - Socket management
+- [Express](https://expressjs.com) - Server Framework
+- [Socket.IO](https://socket.io) - Socket management
+- [Vercel](https://vercel.com) - Socket management
+- [Render](https://www.render.com) - Serverfull platform
 - [MongoDB](https://www.mongodb.com) - Database
-- [Backblaze B2](https://ckeditor.com) - S3 Storage
-- [Render](https://ckeditor.com) - Serverfull platform
-- [Vercel](https://ckeditor.com) - Serverless Platform
-- [Electron](https://ckeditor.com) - Desktop UI
+- [Backblaze B2](https://www.backblaze.com) - S3 Storage
+- [Electron](https://www.electronjs.org) - Desktop UI
 
 
 ## Contributing
