@@ -12,5 +12,9 @@
   "devDependencies": {
     "eslint": "^8.41.0",
     "prettier": "^2.8.8"
+  },
+  "engines": {
+    "yarn": "^1.22",
+    "node": "^18"
   }
 }
