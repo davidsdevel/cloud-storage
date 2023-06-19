@@ -23,7 +23,7 @@ router.get('/:bucket/*', async (req, res, next) => {
   const path = req.path.replace(`/${bucket}/`, '');
 
   try {
-    const file = await getFile(bucket, path);
+    const file = await getFile(bucket, decodeURI(path));
 
     if (type === 'raw') {
       res.setHeader('content-type', file.ContentType);
@@ -122,7 +122,7 @@ router.delete('*', async (req, res) => {
 
   const path = req.path.slice(1);
 
-  const response = await deleteFile(bucket, path);
+  const response = await deleteFile(bucket, decodeURI(path));
   const totalSize = await Bucket.decrementStorage(bucket, response.ContentLength);
 
   req.io.to(bucket).emit('storage:update', totalSize);  

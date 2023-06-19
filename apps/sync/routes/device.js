@@ -1,8 +1,10 @@
-const {Router} = require('express');
+const authMiddleware  = require('../middlewares/auth');
 const Bucket = require('models/bucket');
 const Device = require('models/device');
+const {Router} = require('express');
 const router = Router();
 
+router.use(authMiddleware);
 
 /**
  * Get All Devices
@@ -25,18 +27,22 @@ router.post('/', async (req, res) => {
   const {bucket} = user;
   const {type, model, platform} = body;
 
-  await Device.create({
-    bucket,
-    deviceType: type,
-    platform,
-    model
-  });
+  try {
+    const {_id} = await Device.create({
+      bucket,
+      deviceType: type,
+      platform,
+      model
+    });
 
-  await Bucket.incrementDevices(bucket);
+    await Bucket.incrementDevices(bucket);
 
-  res.json({
-    status: 'OK'
-  });
+    res.json({
+      id: _id
+    });
+  } catch(err) {
+    console.log(err);
+  }
 });
 
 

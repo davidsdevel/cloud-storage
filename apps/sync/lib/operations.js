@@ -4,7 +4,7 @@ const {createReadStream} = require('fs');
 function createClient() {
   return new AWS.S3({
     endpoint: 's3.us-east-005.backblazeb2.com',
-    region: 'us-west-004'
+    region: 'us-east-005'
   });
 }
 
