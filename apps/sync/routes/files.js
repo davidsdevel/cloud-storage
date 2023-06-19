@@ -104,10 +104,10 @@ router.post('/', upload.single('file'), async (req, res) => {
   });
 
   if(type === 'upload') {
-    const totalSize = await Bucket.incrementStorage(bucket, file.size);
+    await Bucket.incrementStorage(bucket, file.size);
     
     req.io.to(bucket).emit('file:new', {path, bucket});
-    req.io.to(bucket).emit('storage:update', totalSize);
+    req.io.to(bucket).emit('storage:update', file.size);
   }
 
   //TODO Modify response
@@ -123,9 +123,9 @@ router.delete('*', async (req, res) => {
   const path = req.path.slice(1);
 
   const response = await deleteFile(bucket, decodeURI(path));
-  const totalSize = await Bucket.decrementStorage(bucket, response.ContentLength);
+  await Bucket.decrementStorage(bucket, response.ContentLength);
 
-  req.io.to(bucket).emit('storage:update', totalSize);  
+  req.io.to(bucket).emit('storage:update', -response.ContentLength);  
   req.io.to(bucket).emit('file:delete', {path});
 
   //TODO Modify response
