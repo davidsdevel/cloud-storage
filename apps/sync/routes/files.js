@@ -7,7 +7,12 @@ const os = require('os');
 
 const tempDir = os.tmpdir();
 
-const upload = multer({ dest: tempDir });
+const upload = multer({
+  limits: {
+    fieldSize: 25 * 1024 * 1024
+  },
+  dest: tempDir
+});
 
 const router = Router();
 
@@ -85,15 +90,14 @@ router.get('/exists/*', async (req, res, next) => {
   }
 });
 
-
 /**
  * Upload Files
  */
 router.post('/', upload.single('file'), async (req, res) => {
   const {bucket} = req.user;
-  const {path, type} = req.body;
+  const {path, type, magnet} = req.body;
   const {file} = req;
-
+  
   const exists = await existsFile(bucket, path);
 
   if (exists)
@@ -106,8 +110,19 @@ router.post('/', upload.single('file'), async (req, res) => {
   if(type === 'upload') {
     await Bucket.incrementStorage(bucket, file.size);
     
-    req.io.to(bucket).emit('file:new', {path, bucket});
+    req.io.to(bucket).emit('file:new', {path, magnet});
     req.io.to(bucket).emit('storage:update', file.size);
+  }
+
+  else if (type === 'update') {
+    const file = await getFile(bucket, decodeURI(path));
+
+    const sizeDifference = file.ContentLength - file.size;
+    
+    await Bucket.incrementStorage(bucket, file.size);
+
+    req.io.to(bucket).emit('file:update', {path, magnet});
+    req.io.to(bucket).emit('storage:update', sizeDifference);
   }
 
   //TODO Modify response

@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 /**
  * Add Device
  */
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   const {user, body} = req;
   const {bucket} = user;
   const {type, model, platform} = body;
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
       id: _id
     });
   } catch(err) {
-    console.log(err);
+    next(err);
   }
 });
 

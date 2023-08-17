@@ -2,7 +2,7 @@
   "name": "sync",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "David's Devel",
   "license": "Apache-2.0",
   "scripts": {
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
